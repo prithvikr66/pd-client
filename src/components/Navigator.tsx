@@ -58,6 +58,74 @@ const formatRouteToLineString = (coordinates) => {
   return `LINESTRING(${lineString})`;
 };
 
+// New component for the info panel
+const InfoPanel = ({ potholes, start, end }) => {
+  const getTotalPotholes = () => potholes.length;
+  
+  const getSeverityCount = () => {
+    return potholes.reduce((acc, p) => {
+      acc[p.severity] = (acc[p.severity] || 0) + 1;
+      return acc;
+    }, {});
+  };
+
+  const isRouteAdvisable = () => {
+    const highSeverityCount = potholes.filter(p => p.severity === 'high').length;
+    if (highSeverityCount > 3) return 'Not Advisable';
+    if (highSeverityCount > 1) return 'Proceed with Caution';
+    return 'Safe to Travel';
+  };
+
+  return (
+    <div style={{
+      padding: '20px',
+      backgroundColor: '#fff',
+      height: '100%',
+      overflowY: 'auto'
+    }}>
+      <h2 style={{ marginBottom: '20px' }}>Route Information</h2>
+      
+      {!start && (
+        <p>Click on the map to set starting point</p>
+      )}
+      
+      {start && !end && (
+        <p>Click on the map to set destination</p>
+      )}
+
+      {start && end && (
+        <>
+          <div style={{ marginBottom: '20px' }}>
+            <h3>Route Status</h3>
+            <p style={{
+              padding: '10px',
+              backgroundColor: isRouteAdvisable() === 'Safe to Travel' ? '#d4edda' : 
+                            isRouteAdvisable() === 'Proceed with Caution' ? '#fff3cd' : '#f8d7da',
+              borderRadius: '4px',
+              marginTop: '10px'
+            }}>
+              {isRouteAdvisable()}
+            </p>
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <h3>Pothole Summary</h3>
+            <p>Total Potholes: {getTotalPotholes()}</p>
+            <div style={{ marginTop: '10px' }}>
+              <h4>Severity Breakdown:</h4>
+              {Object.entries(getSeverityCount()).map(([severity, count]) => (
+                <p key={severity}>
+                  {severity.charAt(0).toUpperCase() + severity.slice(1)}: {count}
+                </p>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 export default function Navigator() {
   const [position, setPosition] = useState(null);
   const [start, setStart] = useState(null);
@@ -89,7 +157,7 @@ export default function Navigator() {
     const linestring = formatRouteToLineString(coords);
   
     try {
-      const res = await fetch('http://localhost:3000/route', {
+      const res = await fetch('https://pd-server-six.vercel.app/route', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -109,30 +177,38 @@ export default function Navigator() {
   if (!position) return <p>Loading...</p>;
 
   return (
-    <MapContainer
-      center={position}
-      zoom={14}
-      style={{ height: '100vh', width: '100%' }}
-    >
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      <RecenterMap position={position} />
-      <MapClickHandler onSetStartEnd={onSetStartEnd} />
+    <div style={{ display: 'flex', height: '100%', width: '100%' }}>
+      <div style={{ width: '65%', height: '100%' }}>
+        <MapContainer
+          center={position}
+          zoom={14}
+          style={{ height: '100%', width: '100%' }}
+        >
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <RecenterMap position={position} />
+          <MapClickHandler onSetStartEnd={onSetStartEnd} />
 
-      {start && <Marker position={start} />}
-      {end && <Marker position={end} />}
-      {start && end && (
-        <Routing start={start} end={end} onRouteComplete={handleRouteCoords} />
-      )}
+          {start && <Marker position={start} />}
+          {end && <Marker position={end} />}
+          {start && end && (
+            <Routing start={start} end={end} onRouteComplete={handleRouteCoords} />
+          )}
 
-      {potholes.map((p, idx) => (
-        <CircleMarker
-          key={idx}
-          center={[p.lat, p.lng]}
-          radius={6}
-          color="red"
-          fillOpacity={0.7}
-        />
-      ))}
-    </MapContainer>
+          {potholes.map((p, idx) => (
+            <CircleMarker
+              key={idx}
+              center={[p.lat, p.lng]}
+              radius={6}
+              color={p.severity === 'high' ? 'red' : p.severity === 'medium' ? 'orange' : 'yellow'}
+              fillOpacity={0.7}
+            >
+            </CircleMarker>
+          ))}
+        </MapContainer>
+      </div>
+      <div style={{ width: '35%', borderLeft: '1px solid #ccc' }}>
+        <InfoPanel potholes={potholes} start={start} end={end} />
+      </div>
+    </div>
   );
 }

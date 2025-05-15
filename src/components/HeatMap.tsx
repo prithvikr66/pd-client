@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import 'leaflet.heat';
@@ -50,6 +50,15 @@ const RecenterMap = ({ position }) => {
   return null;
 };
 
+const MapClickLogger = () => {
+  useMapEvents({
+    click(e) {
+      console.log('Clicked at:', e.latlng); // Logs { lat, lng }
+    },
+  });
+  return null;
+};
+
 export default function HeatMap() {
   const [position, setPosition] = useState(null);
   const [potholes, setPotholes] = useState([]);
@@ -62,7 +71,7 @@ export default function HeatMap() {
         setPosition(userPos);
 
         const res = await fetch(
-          `http://localhost:3000/nearby?lat=${latitude}&lng=${longitude}&radius=3000`
+          `https://pd-server-six.vercel.app/nearby?lat=${latitude}&lng=${longitude}&radius=6000`
         );
         const data = await res.json();
         setPotholes(data);
@@ -76,6 +85,7 @@ export default function HeatMap() {
 
   return (
     <MapContainer center={position} zoom={14} style={{ height: '100vh', width: '100%' }}>
+      <MapClickLogger />
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <RecenterMap position={position} />
       <HeatLayer potholes={potholes} />
