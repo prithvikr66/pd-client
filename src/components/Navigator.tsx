@@ -70,54 +70,169 @@ const InfoPanel = ({ potholes, start, end }) => {
   };
 
   const isRouteAdvisable = () => {
-    const highSeverityCount = potholes.filter(p => p.severity === 'high').length;
-    if (highSeverityCount > 3) return 'Not Advisable';
+    const highSeverityCount = potholes.filter(p => p.severity === 'medium').length;
+    if (highSeverityCount > 2) return 'Not Advisable';
     if (highSeverityCount > 1) return 'Proceed with Caution';
     return 'Safe to Travel';
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Safe to Travel': return '#4CAF50';
+      case 'Proceed with Caution': return '#FFC107';
+      case 'Not Advisable': return '#F44336';
+      default: return '#757575';
+    }
+  };
+
   return (
     <div style={{
-      padding: '20px',
-      backgroundColor: '#fff',
+      padding: '24px',
+      backgroundColor: '#f8f9fa',
       height: '100%',
-      overflowY: 'auto'
+      overflowY: 'auto',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
-      <h2 style={{ marginBottom: '20px' }}>Route Information</h2>
+      <h2 style={{ 
+        marginBottom: '24px',
+        color: '#2c3e50',
+        fontSize: '1.8rem',
+        fontWeight: '600',
+        borderBottom: '2px solid #e9ecef',
+        paddingBottom: '12px'
+      }}>Route Information</h2>
       
       {!start && (
-        <p>Click on the map to set starting point</p>
+        <div style={{
+          padding: '16px',
+          backgroundColor: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+          color: '#6c757d'
+        }}>
+          Click on the map to set starting point
+        </div>
       )}
       
       {start && !end && (
-        <p>Click on the map to set destination</p>
+        <div style={{
+          padding: '16px',
+          backgroundColor: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+          color: '#6c757d'
+        }}>
+          Click on the map to set destination
+        </div>
       )}
 
       {start && end && (
         <>
-          <div style={{ marginBottom: '20px' }}>
-            <h3>Route Status</h3>
-            <p style={{
-              padding: '10px',
-              backgroundColor: isRouteAdvisable() === 'Safe to Travel' ? '#d4edda' : 
-                            isRouteAdvisable() === 'Proceed with Caution' ? '#fff3cd' : '#f8d7da',
-              borderRadius: '4px',
-              marginTop: '10px'
+          <div style={{ 
+            marginBottom: '24px',
+            backgroundColor: '#fff',
+            borderRadius: '8px',
+            padding: '20px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+          }}>
+            <h3 style={{ 
+              color: '#2c3e50',
+              marginBottom: '16px',
+              fontSize: '1.4rem',
+              fontWeight: '500'
+            }}>Route Status</h3>
+            <div style={{
+              padding: '12px 16px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '6px',
+              border: `2px solid ${getStatusColor(isRouteAdvisable())}`,
+              color: getStatusColor(isRouteAdvisable()),
+              fontWeight: '500',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
             }}>
+              <span style={{
+                width: '12px',
+                height: '12px',
+                borderRadius: '50%',
+                backgroundColor: getStatusColor(isRouteAdvisable())
+              }}></span>
               {isRouteAdvisable()}
-            </p>
+            </div>
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <h3>Pothole Summary</h3>
-            <p>Total Potholes: {getTotalPotholes()}</p>
-            <div style={{ marginTop: '10px' }}>
-              <h4>Severity Breakdown:</h4>
-              {Object.entries(getSeverityCount()).map(([severity, count]) => (
-                <p key={severity}>
-                  {severity.charAt(0).toUpperCase() + severity.slice(1)}: {count}
-                </p>
-              ))}
+          <div style={{ 
+            backgroundColor: '#fff',
+            borderRadius: '8px',
+            padding: '20px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+          }}>
+            <h3 style={{ 
+              color: '#2c3e50',
+              marginBottom: '16px',
+              fontSize: '1.4rem',
+              fontWeight: '500'
+            }}>Pothole Summary</h3>
+            
+            <div style={{
+              padding: '16px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '6px',
+              marginBottom: '20px'
+            }}>
+              <div style={{
+                fontSize: '1.2rem',
+                fontWeight: '500',
+                color: '#2c3e50',
+                marginBottom: '8px'
+              }}>
+                Total Potholes: {getTotalPotholes()}
+              </div>
+            </div>
+
+            <div>
+              <h4 style={{
+                color: '#2c3e50',
+                marginBottom: '12px',
+                fontSize: '1.1rem',
+                fontWeight: '500'
+              }}>Severity Breakdown:</h4>
+              <div style={{
+                display: 'grid',
+                gap: '12px'
+              }}>
+                {Object.entries(getSeverityCount()).map(([severity, count]) => (
+                  <div key={severity} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '12px 16px',
+                    backgroundColor: '#f8f9fa',
+                    borderRadius: '6px',
+                    border: '1px solid #e9ecef'
+                  }}>
+                    <span style={{
+                      textTransform: 'capitalize',
+                      color: '#495057',
+                      fontWeight: '500'
+                    }}>
+                      {severity}
+                    </span>
+                    <span style={{
+                      backgroundColor: severity === 'high' ? '#F44336' : 
+                                    severity === 'medium' ? '#FFC107' : '#4CAF50',
+                      color: '#fff',
+                      padding: '4px 12px',
+                      borderRadius: '12px',
+                      fontSize: '0.9rem',
+                      fontWeight: '500'
+                    }}>
+                      {count}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </>
