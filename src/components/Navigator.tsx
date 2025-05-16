@@ -11,6 +11,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+import styles from './Navigator.module.css';
 
 const RecenterMap = ({ position }) => {
   const map = useMap();
@@ -292,8 +293,8 @@ export default function Navigator() {
   if (!position) return <p>Loading...</p>;
 
   return (
-    <div style={{ display: 'flex', height: '100%', width: '100%' }}>
-      <div style={{ width: '65%', height: '100%' }}>
+    <div className={styles.container}>
+      <div className={styles.mapContainer}>
         <MapContainer
           center={position}
           zoom={14}
@@ -321,7 +322,7 @@ export default function Navigator() {
           ))}
         </MapContainer>
       </div>
-      <div style={{ width: '35%', borderLeft: '1px solid #ccc' }}>
+      <div className={styles.infoContainer}>
         <InfoPanel potholes={potholes} start={start} end={end} />
       </div>
     </div>
