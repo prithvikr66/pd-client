@@ -199,28 +199,95 @@ export const App = () => {
   )
 }
 
-  // <div className="toolbar">
-  //   {/* Font Selector */}
-  //   <select className="toolbar-select">
-  //     <option>Open Sans</option>
-  //     <option>Arial</option>
-  //     <option>Roboto</option>  
-  //     <option>Times New Roman</option>
-  //   </select>
+// case "text": {
+//   const anchor = { x: pointer.x, y: pointer.y }; // where user clicked
 
-  //   {/* Font Size */}
-  //   <input type="number" defaultValue={12} className="toolbar-input" />
+//   // sizing knobs
+//   const padX = 24;
+//   const padY = 16;
+//   const arrowDepth = 28; // how far the V sticks out
+//   const arrowSpan = 32;  // opening height of the V at the box edge
 
-  //   {/* Formatting Buttons */}
-  //   <button className="toolbar-btn">B</button>
-  //   <button className="toolbar-btn italic">I</button>
-  //   <button className="toolbar-btn underline">U</button>
+//   // editable text
+//   const text = new fabric.IText("Double click to edit", {
+//     fontSize: textOptions.fontSize,
+//     fontFamily: textOptions.fontFamily,
+//     fontWeight: textOptions.bold ? "bold" : "normal",
+//     textAlign: textOptions.alignment || "center",
+//     fill: "#000",
+//     originX: "center",
+//     originY: "center",
+//     editable: true,
+//   });
 
-  //   {/* Alignment */}
-  //   <div className="align-buttons">
-  //     <button className="toolbar-btn">≡</button>
-  //     <button className="toolbar-btn">≡</button>
-  //     <button className="toolbar-btn">≡</button>
-  //     <button className="toolbar-btn">≡</button>
-  //   </div>
-  // </div>
+//   // helper to create outline points (rect + side arrow) centered at (0,0)
+//   const makePoints = (w: number, h: number) => {
+//     const s = Math.min(arrowSpan / 2, (h - 8) / 2); // keep V inside box height
+//     return [
+//       new fabric.Point(-w / 2, -h / 2), // TL
+//       new fabric.Point( w / 2, -h / 2), // TR
+//       new fabric.Point( w / 2, -s),     // notch top
+//       new fabric.Point( w / 2 + arrowDepth, 0), // tip
+//       new fabric.Point( w / 2,  s),     // notch bottom
+//       new fabric.Point( w / 2,  h / 2), // BR
+//       new fabric.Point(-w / 2,  h / 2), // BL
+//     ];
+//   };
+
+//   // initial sizes
+//   text.initDimensions(); // ensure text.width/height are up to date
+//   let boxW = text.width + padX * 2;
+//   let boxH = text.height + padY * 2;
+
+//   // single outline — no gap possible
+//   const frame = new fabric.Polygon(makePoints(boxW, boxH), {
+//     fill: "", // transparent
+//     stroke: "#0b7285",
+//     strokeWidth: 6,
+//     strokeLineJoin: "round",
+//     objectCaching: false,
+//     originX: "center",
+//     originY: "center",
+//   });
+
+//   // group outline + text
+//   const group = new fabric.Group([frame, text], {
+//     originX: "center",
+//     originY: "center",
+//   });
+
+//   // place so that the arrow tip sits exactly on the click
+//   group.set({
+//     left: anchor.x - (boxW / 2 + arrowDepth),
+//     top: anchor.y,
+//   });
+//   group.setCoords();
+
+//   fabricCanvas.add(group);
+//   setAnnotationHistory(prev => [...prev, group]);
+
+//   // keep the frame in sync with text changes
+//   const resize = () => {
+//     text.initDimensions(); // refresh text.width/height after edits
+//     const w = Math.max(30, text.width + padX * 2);
+//     const h = Math.max(20, text.height + padY * 2);
+
+//     frame.set({ points: makePoints(w, h) });
+
+//     // keep the arrow tip pinned at the original click point
+//     group.set({
+//       left: anchor.x - (w / 2 + arrowDepth),
+//       top: anchor.y,
+//     });
+
+//     group.setCoords();
+//     fabricCanvas.requestRenderAll();
+//   };
+
+//   text.on("changed", resize);
+//   text.on("editing:entered", resize);
+//   text.on("editing:exited", resize);
+
+//   break;
+// }
+
