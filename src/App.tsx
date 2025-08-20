@@ -198,3 +198,29 @@ export const App = () => {
     </div>
   )
 }
+
+  // <div className="toolbar">
+  //   {/* Font Selector */}
+  //   <select className="toolbar-select">
+  //     <option>Open Sans</option>
+  //     <option>Arial</option>
+  //     <option>Roboto</option>  
+  //     <option>Times New Roman</option>
+  //   </select>
+
+  //   {/* Font Size */}
+  //   <input type="number" defaultValue={12} className="toolbar-input" />
+
+  //   {/* Formatting Buttons */}
+  //   <button className="toolbar-btn">B</button>
+  //   <button className="toolbar-btn italic">I</button>
+  //   <button className="toolbar-btn underline">U</button>
+
+  //   {/* Alignment */}
+  //   <div className="align-buttons">
+  //     <button className="toolbar-btn">≡</button>
+  //     <button className="toolbar-btn">≡</button>
+  //     <button className="toolbar-btn">≡</button>
+  //     <button className="toolbar-btn">≡</button>
+  //   </div>
+  // </div>
